@@ -32,10 +32,9 @@ class RInstaller(ClusterSetup):
 			node.ssh.execute('wget -c -P /opt/software/R https://bitbucket.org/sulab/omics_pipe/raw/e345e666dd70711f79d310fe451a361893626196/dist/AWS_customBuild/packages_bioc_1.R')
 			node.ssh.execute('wget -c -P /opt/software/R https://bitbucket.org/sulab/omics_pipe/raw/e345e666dd70711f79d310fe451a361893626196/dist/AWS_customBuild/packages_bioc_2.R')
 			
-			node.ssh.execute('module load R/3.1.1')
-			node.ssh.execute('Rscript /opt/software/R/packages_cran.R')
+			node.ssh.execute('module load R/3.1.1 && Rscript /opt/software/R/packages_cran.R')
 			log.info("...CRAN packages have been installed --> installing BioConductor packages")
-			node.ssh.execute('Rscript /opt/software/R/packages_bioc_1.R')
+			node.ssh.execute('module load R/3.1.1 && Rscript /opt/software/R/packages_bioc_1.R')
 			log.info("...BioConductor1 packages have been installed")
-			node.ssh.execute('Rscript /opt/software/R/packages_bioc_2.R')
+			node.ssh.execute('module load R/3.1.1 && Rscript /opt/software/R/packages_bioc_2.R')
 			log.info("...BioConductor2 packages have been installed")

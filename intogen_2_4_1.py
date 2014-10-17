@@ -11,6 +11,7 @@ class IntogenInstaller(ClusterSetup):
 			node.ssh.execute('apt-get -y install swig')
 			node.ssh.execute('sed -i '11s|$ROOT_PATH/data|/data/database/intogen|g' /opt/software/intogen/intogen-mutations-analysis-7fbd0b4803be/setup')
 			node.ssh.execute('cd /opt/software/intogen/intogen-mutations-analysis-7fbd0b4803be/ && ./setup')
+			node.ssh.execute('rm -r /data') # this will be linkin in on_boot.py to database drive
 						
 			log.info("Creating Intogen Module")
 			node.ssh.execute('mkdir -p /usr/local/Modules/applications/intogen/;touch /usr/local/Modules/applications/intogen/2.4.1')
