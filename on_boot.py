@@ -22,4 +22,8 @@ class Setup(ClusterSetup):
 		master.ssh.execute('echo "/data/storage" %s"(async,no_root_squash,no_subtree_check,rw)" >> /etc/exports' % (node.alias))
 		master.ssh.execute('exportfs -a')
 		node.ssh.execute('mkdir -p /data/storage')
-		node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
+		node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
+#		node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
+
+		# add authorized users for passwordless ssh login
+		master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/authorized_keys %s:/home/$i/.ssh; done' % (node.alias))
