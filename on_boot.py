@@ -26,6 +26,6 @@ class Setup(ClusterSetup):
 #		node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
 
 		# add authorized users for passwordless ssh login
-		master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/authorized_keys %s:/home/$i/.ssh; done' % (node.alias))
-                master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/id_rsa.pub %s:/home/$i/.ssh; done' % (node.alias))
-                master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/id_rsa %s:/home/$i/.ssh; done' % (node.alias))
+		#master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/authorized_keys %s:/home/$i/.ssh; done' % (node.alias))
+                #master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/id_rsa.pub %s:/home/$i/.ssh; done' % (node.alias))
+                #master.ssh.execute('for i in $(users); do scp /home/$i/.ssh/id_rsa %s:/home/$i/.ssh; done' % (node.alias))
