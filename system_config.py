@@ -67,3 +67,6 @@ class SystemInstaller(ClusterSetup):
 
 			log.info("Installing additional system tools...")
 			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2')
+
+			log.info('Fix ssh timeout')
+			node.ssh.execute('echo ClientAliveInterval 60 >> /etc/ssh/sshd_config && service ssh restart')
