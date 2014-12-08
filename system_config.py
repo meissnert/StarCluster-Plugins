@@ -65,5 +65,24 @@ class SystemInstaller(ClusterSetup):
 			#node.ssh.execute('wget -c https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.6/genetorrent-download_3.8.6-ubuntu2.130-12.04_amd64.deb')
 			#node.ssh.execute('dpkg -i genetorrent-common_3.8.6-ubuntu2.130-12.04_amd64.deb genetorrent-download_3.8.6-ubuntu2.130-12.04_amd64.deb')
 
+			log.info("Installing s3fs on %s" % (node.alias))
+			node.ssh.execute('apt-get install -y build-essential libfuse-dev fuse-utils libcurl4-openssl-dev libxml2-dev mime-support automake libtool')
+			node.ssh.execute('cd /opt/software && git clone https://github.com/s3fs-fuse/s3fs-fuse.git')
+			node.ssh.execute('cd /opt/software/s3fs-fuse && autoreconf --install && ./configure --prefix=/usr')
+			node.ssh.execute('cd /opt/software/s3fs-fuse && make && make install')
+
+			log.info("Installing ya3fs on %s" % (node.alias))
+			node.ssh.execute('apt-get -y install fuse python-pip')
+			node.ssh.execute('pip install yas3fs')
+			node.ssh.execute("sed -i'' 's/^# *user_allow_other/user_allow_other/' /etc/fuse.conf")
+			node.ssh.execute('chmod a+r /etc/fuse.conf')
+
 			log.info("Installing additional system tools...")
-			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2')
+			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils')
+
+			# link sh to bash, instead of dash
+			node.ssh.execute('mv /bin/sh /bin/sh.orig')
+			node.ssh.execute('ln -s /bin/bash /bin/sh')
+
+			log.info("Installing Ganglia monitoring")
+			master.ssh.execute('export DEBIAN_FRONTEND=noninteractive && apt-get install -y ganglia-monitor rrdtool gmetad ganglia-webfrontend')

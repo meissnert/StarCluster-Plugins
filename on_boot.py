@@ -25,6 +25,13 @@ class Setup(ClusterSetup):
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
         # node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
 
+        # add manually mounted s3 basespacebackup bucket
+        master.ssh.execute('echo "/data/s3/basespacebackup" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
+        master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
+        master.ssh.execute('exportfs -a')
+        node.ssh.execute('mkdir -p /data/s3/basespacebackup')
+        node.ssh.execute('if mount | grep /data/s3/basespacebackup; then echo "already mounted"; else mount -t nfs master:/data/s3/basespacebackup /data/s3/basespacebackup; fi')
+
         # add authorized users for passwordless ssh login
         # master.ssh.execute('for i in $(ls /home); do scp /home/$i/.ssh/authorized_keys %s:/home/$i/.ssh; done' % (node.alias))
         # master.ssh.execute('for i in $(ls /home); do scp /home/$i/.ssh/id_rsa.pub %s:/home/$i/.ssh; done' % (node.alias))
@@ -34,3 +41,11 @@ class Setup(ClusterSetup):
         log.info('Syncing software with master node...')
         master.ssh.execute('rsync -avzh /opt/software/ %s:/opt/software/' % (node.alias))
         master.ssh.execute('rsync -avzh /usr/local/Modules/applications/ %s:/usr/local/Modules/applications/' % (node.alias))
+
+        node.ssh.execute('mv /bin/sh /bin/sh.orig')
+        node.ssh.execute('ln -s /bin/bash /bin/sh')
+
+        # install ganglia monitoring
+        log.info("Install Ganglia monitoring")
+        master.ssh.execute('scp /gmond.conf %s:/etc/ganglia/gmond.conf' % (node.alias))
+        node.ssh.execute('service ganglia-monitor restart')
