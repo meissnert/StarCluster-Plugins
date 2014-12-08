@@ -86,3 +86,6 @@ class SystemInstaller(ClusterSetup):
 
 			log.info("Installing Ganglia monitoring")
 			master.ssh.execute('export DEBIAN_FRONTEND=noninteractive && apt-get install -y ganglia-monitor rrdtool gmetad ganglia-webfrontend')
+
+			log.info('Fix ssh timeout')
+			node.ssh.execute('echo ClientAliveInterval 60 >> /etc/ssh/sshd_config && service ssh restart')
