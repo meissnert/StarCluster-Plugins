@@ -18,43 +18,17 @@ class Setup(ClusterSetup):
         node.ssh.execute('ln -s -f /data/database/intogen /opt/software/intogen/intogen-mutations-analysis-7fbd0b4803be/data')
 
         # add manually mounted storage
-        #host = master.ssh.execute('cat /etc/hosts | tail -n 1 | cut -f 2 -d " "')[1]
         master.ssh.execute('echo "/data/storage" %s"(async,no_root_squash,no_subtree_check,rw)" >> /etc/exports' % (node.alias))
         master.ssh.execute('exportfs -a')
         node.ssh.execute('mkdir -p /data/storage')
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
-        # node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
-
-        # add manually mounted s3 basespacebackup bucket
-        # master.ssh.execute('echo "/data/s3/basespacebackup" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/basespacebackup')
-        # node.ssh.execute('if mount | grep /data/s3/basespacebackup; then echo "already mounted"; else mount -t nfs master:/data/s3/basespacebackup /data/s3/basespacebackup; fi')
-
-        # master.ssh.execute('echo "/data/s3/averapatients" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averapatients')
-        # node.ssh.execute('if mount | grep /data/s3/averapatients; then echo "already mounted"; else mount -t nfs master:/data/s3/averapatients /data/s3/averapatients; fi')
-        
-        # master.ssh.execute('echo "/data/s3/averaprojects" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averaprojects')
-        # node.ssh.execute('if mount | grep /data/s3/averaprojects; then echo "already mounted"; else mount -t nfs master:/data/s3/averaprojects /data/s3/averaprojects; fi')
-
-        # master.ssh.execute('echo "/data/s3/averafastq" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averafastq')
-        # node.ssh.execute('if mount | grep /data/s3/averafastq; then echo "already mounted"; else mount -t nfs master:/data/s3/averafastq /data/s3/averafastq; fi')
 
         # sync node with headnode
         log.info('Syncing software with master node...')
         master.ssh.execute('rsync -avzh /opt/software/ %s:/opt/software/' % (node.alias))
         master.ssh.execute('rsync -avzh /usr/local/Modules/applications/ %s:/usr/local/Modules/applications/' % (node.alias))
 
+        # set shell
         node.ssh.execute('mv /bin/sh /bin/sh.orig')
         node.ssh.execute('ln -s /bin/bash /bin/sh')
 
