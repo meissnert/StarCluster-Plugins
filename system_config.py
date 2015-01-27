@@ -78,7 +78,7 @@ class SystemInstaller(ClusterSetup):
 			node.ssh.execute('chmod a+r /etc/fuse.conf')
 
 			log.info("Installing additional system tools...")
-			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils')
+			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils zip')
 
 			# link sh to bash, instead of dash
 			node.ssh.execute('mv /bin/sh /bin/sh.orig')
