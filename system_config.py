@@ -79,6 +79,8 @@ class SystemInstaller(ClusterSetup):
 
 			log.info("Installing additional system tools...")
 			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils zip')
+			node.ssh.execute('pip install pysam')
+			node.ssh.execute('pip install networkx')
 
 			# link sh to bash, instead of dash
 			node.ssh.execute('mv /bin/sh /bin/sh.orig')
@@ -89,3 +91,4 @@ class SystemInstaller(ClusterSetup):
 
 			log.info('Fix ssh timeout')
 			node.ssh.execute('echo ClientAliveInterval 60 >> /etc/ssh/sshd_config && service ssh restart')
+
