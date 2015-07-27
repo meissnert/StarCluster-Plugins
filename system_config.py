@@ -78,7 +78,7 @@ class SystemInstaller(ClusterSetup):
 			node.ssh.execute('chmod a+r /etc/fuse.conf')
 
 			log.info("Installing additional system tools...")
-			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils zip')
+			node.ssh.execute('apt-get install -y tcl tcl-dev tabix aria2 moreutils zip cmake')
 			node.ssh.execute('pip install pysam')
 			node.ssh.execute('pip install networkx')
 
