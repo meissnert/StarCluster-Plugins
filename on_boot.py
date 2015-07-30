@@ -64,9 +64,9 @@ class Setup(ClusterSetup):
         node.ssh.execute('service ganglia-monitor restart')
 
         # remount /tmp to /mnt/tmp
-        log.info("Remounting /tmp to /mnt/tmp ..")
+	log.info("Remounting /tmp to /mnt/tmp ..")
         node.ssh.execute('mkdir -p -m 1777 /mnt/tmp')
-        node.ssh.execute('mount --bind /mnt/tmp /tmp')
+	node.ssh.execute('mount --bind /mnt/tmp /tmp')
 
         # mount s3 buckets
         log.info("Mounting S3 buckets ..")
