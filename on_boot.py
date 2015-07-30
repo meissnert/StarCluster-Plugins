@@ -1,3 +1,4 @@
+
 from starcluster.clustersetup import ClusterSetup
 from starcluster.logger import log
 
@@ -18,43 +19,17 @@ class Setup(ClusterSetup):
         node.ssh.execute('ln -s -f /data/database/intogen /opt/software/intogen/intogen-mutations-analysis-7fbd0b4803be/data')
 
         # add manually mounted storage
-        #host = master.ssh.execute('cat /etc/hosts | tail -n 1 | cut -f 2 -d " "')[1]
         master.ssh.execute('echo "/data/storage" %s"(async,no_root_squash,no_subtree_check,rw)" >> /etc/exports' % (node.alias))
         master.ssh.execute('exportfs -a')
         node.ssh.execute('mkdir -p /data/storage')
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
-        # node.ssh.execute('mount -t nfs master:/data/storage /data/storage')
-
-        # add manually mounted s3 basespacebackup bucket
-        # master.ssh.execute('echo "/data/s3/basespacebackup" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/basespacebackup')
-        # node.ssh.execute('if mount | grep /data/s3/basespacebackup; then echo "already mounted"; else mount -t nfs master:/data/s3/basespacebackup /data/s3/basespacebackup; fi')
-
-        # master.ssh.execute('echo "/data/s3/averapatients" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averapatients')
-        # node.ssh.execute('if mount | grep /data/s3/averapatients; then echo "already mounted"; else mount -t nfs master:/data/s3/averapatients /data/s3/averapatients; fi')
-        
-        # master.ssh.execute('echo "/data/s3/averaprojects" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averaprojects')
-        # node.ssh.execute('if mount | grep /data/s3/averaprojects; then echo "already mounted"; else mount -t nfs master:/data/s3/averaprojects /data/s3/averaprojects; fi')
-
-        # master.ssh.execute('echo "/data/s3/averafastq" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        # master.ssh.execute("awk '!a[$0]++' /etc/exports | sponge /etc/exports") # get rid of duplicate entries 
-        # master.ssh.execute('exportfs -a')
-        # node.ssh.execute('mkdir -p /data/s3/averafastq')
-        # node.ssh.execute('if mount | grep /data/s3/averafastq; then echo "already mounted"; else mount -t nfs master:/data/s3/averafastq /data/s3/averafastq; fi')
 
         # sync node with headnode
         log.info('Syncing software with master node...')
         master.ssh.execute('rsync -avzh /opt/software/ %s:/opt/software/' % (node.alias))
         master.ssh.execute('rsync -avzh /usr/local/Modules/applications/ %s:/usr/local/Modules/applications/' % (node.alias))
 
+        # set shell
         node.ssh.execute('mv /bin/sh /bin/sh.orig')
         node.ssh.execute('ln -s /bin/bash /bin/sh')
 
@@ -74,8 +49,13 @@ class Setup(ClusterSetup):
         node.ssh.execute('mkdir -p /data/s3/averapatients')
         node.ssh.execute('mkdir -p /data/s3/averaprojects')
         node.ssh.execute('mkdir -p /data/s3/averafastq')
+        node.ssh.execute('mkdir -p /data/s3/averamirt')
 
         node.ssh.execute('if mount | grep /data/s3/basespacebackup; then umount -l /data/s3/basespacebackup && s3fs averafastq /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs basespacebackup /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averapatients; then umount -l /data/s3/averapatients && s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averaprojects; then umount -l /data/s3/averaprojects && s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averafastq; then umount -l /data/s3/averafastq && s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+        node.ssh.execute('if mount | grep /data/s3/averamirt; then umount -l /data/s3/averamirt && s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+
+        #add cron job to clear out the s3fs cache that is older then 12 hours, run every minute
+        node.ssh.execute("echo '* * * * * find /mnt/tmp/avera*/ -type f -mmin +$((60*12)) -exec rm -f '{}' \;' >> /var/spool/cron/crontabs/root")
