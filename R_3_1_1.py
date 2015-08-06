@@ -6,6 +6,7 @@ class RInstaller(ClusterSetup):
 		for node in nodes:
 			log.info("Installing R 3.1.1 on %s" % (node.alias))
 			log.info("...installing dependencies")
+			node.ssh.execute('apt-get update')
 			node.ssh.execute('apt-get install -y libreadline-dev ncurses-dev libpng-dev texinfo texlive texlive-base luatex texlive-latex-base texlive-luatex texlive-extra-utils texlive-latex-recommended texlive-fonts-extra freetype* libxml2 libxml2-dev libpng12-dev libcurl4-openssl-dev tk-dev xterm')
 			node.ssh.execute('apt-get install -y libgtk2.0-dev xorg-dev')
 			log.info("...dependencies installed --> --> downloading R")

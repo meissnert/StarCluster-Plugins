@@ -5,7 +5,7 @@ class MOJOInstaller(ClusterSetup):
 	def run(self, nodes, master, user, user_shell, volumes):
 		for node in nodes:
 			log.info("Installing MOJO 0.0.5 on %s" % (node.alias))
-			node.ssh.execute('wget -c -P /opt/software/mojo http://dmel.uchicago.edu/~chai/MOJO/releases/MOJO-v0.0.5-linux-x86_64.tar.gz')
+			node.ssh.execute('wget -c -P /opt/software/mojo https://igsb-xfer.opensciencedatacloud.org/WhiteLab/MOJO/releases/MOJO-v0.0.5-linux-x86_64.tar.gz')
 			node.ssh.execute('tar zxf /opt/software/mojo/MOJO-v0.0.5-linux-x86_64.tar.gz -C /opt/software/mojo')
 
 			node.ssh.execute('cp /opt/software/mojo/MOJO-v0.0.5-linux-x86_64/Sample.configfile.txt /opt/software/mojo/MOJO-v0.0.5-linux-x86_64/config.txt')
