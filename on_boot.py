@@ -28,10 +28,17 @@ class Setup(ClusterSetup):
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
 
         # add manually mounted basespace
+<<<<<<< HEAD
 #        master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
 #        master.ssh.execute('exportfs -a')
 #        node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
 #        node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
+=======
+        #master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
+        #master.ssh.execute('exportfs -a')
+        #node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
+        #node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
+>>>>>>> refs/remotes/origin/master
 
         # sync node with headnode
         log.info('Syncing software with master node...')
@@ -64,6 +71,9 @@ class Setup(ClusterSetup):
         # copy credentials
         master.ssh.execute('scp /root/.s3cfg %s:/root/.s3cfg' % (node.alias))
         master.ssh.execute('scp /root/.passwd-s3fs %s:/root/.passwd-s3fs' % (node.alias))
+
+        # sync user permissions
+        master.ssh.execute('scp /etc/group %s:/etc/group' % (node.alias))
 
         node.ssh.execute('if mount | grep /data/s3/basespacebackup; then umount -l /data/s3/basespacebackup && s3fs averafastq /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs basespacebackup /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averapatients; then umount -l /data/s3/averapatients && s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
