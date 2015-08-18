@@ -22,6 +22,13 @@ class FakeModInstaller(ClusterSetup):
 			node.ssh.execute('echo -e "prepend-path\tPATH\t\$root" >> /usr/local/Modules/applications/gatk/3.2-2')			
 			node.ssh.execute('mkdir -p /opt/software/gatk/3.2-2')
 
+			log.info("Creating GATK nightly_2015-02-25-g8a0ce74 module files on %s" % (node.alias))
+			node.ssh.execute('mkdir -p /usr/local/Modules/applications/gatk')
+			node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/gatk/nightly_2015-02-25-g8a0ce74')
+			node.ssh.execute('echo "set root /opt/software/gatk/nightly_2015-02-25-g8a0ce74" >> /usr/local/Modules/applications/gatk/nightly_2015-02-25-g8a0ce74')
+			node.ssh.execute('echo -e "prepend-path\tPATH\t\$root" >> /usr/local/Modules/applications/gatk/nightly_2015-02-25-g8a0ce74')			
+			node.ssh.execute('mkdir -p /opt/software/gatk/nightly_2015-02-25-g8a0ce74')			
+
 			log.info("Creating GATK 3.3-0 module files on %s" % (node.alias))
 			node.ssh.execute('mkdir -p /usr/local/Modules/applications/gatk')
 			node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/gatk/3.3-0')
