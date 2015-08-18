@@ -27,18 +27,10 @@ class Setup(ClusterSetup):
         node.ssh.execute('mkdir -p /data/storage')
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
 
-        # add manually mounted basespace
-<<<<<<< HEAD
-#        master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-#        master.ssh.execute('exportfs -a')
-#        node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
-#        node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
-=======
         #master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
         #master.ssh.execute('exportfs -a')
         #node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
         #node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
->>>>>>> refs/remotes/origin/master
 
         # sync node with headnode
         log.info('Syncing software with master node...')
