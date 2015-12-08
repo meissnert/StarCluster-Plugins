@@ -42,10 +42,10 @@ class Setup(ClusterSetup):
         node.ssh.execute('ln -s /bin/bash /bin/sh')
 
         # install ganglia monitoring
-        log.info("Install Ganglia monitoring")
-        master.ssh.execute('scp /etc/ganglia/gmond.conf %s:/etc/ganglia/gmond.conf' % (node.alias))
-        node.ssh.execute('service nginx stop')
-        node.ssh.execute('service ganglia-monitor restart && service gmetad restart && service apache2 restart')
+#        log.info("Install Ganglia monitoring")
+#        master.ssh.execute('scp /etc/ganglia/gmond.conf %s:/etc/ganglia/gmond.conf' % (node.alias))
+#        node.ssh.execute('service nginx stop')
+#        node.ssh.execute('service ganglia-monitor restart && service gmetad restart && service apache2 restart')
 
         # remount /tmp to /mnt/tmp
         log.info('Remounting /tmp to /mnt/tmp ..')

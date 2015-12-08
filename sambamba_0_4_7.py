@@ -16,7 +16,6 @@ class SambambaInstaller(ClusterSetup):
 			#node.ssh.execute('apt-get update && sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring && sudo apt-get update')
 			#node.ssh.execute('apt-get -y install ldc gdc dmd-bin')
 			#node.ssh.execute('make -C /opt/software/sambamba/sambamba-0.4.7')
-			node.ssh.execute('cp /opt/software/sambamba/sambamba_v0.4.7 /opt/software/sambamba/sambamba')
 			
 			node.ssh.execute('mkdir -p /usr/local/Modules/applications/sambamba/;touch /usr/local/Modules/applications/sambamba/0.4.7')
 			node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/sambamba/0.4.7')
