@@ -36,6 +36,7 @@ class Setup(ClusterSetup):
         log.info('Syncing software with master node...')
         master.ssh.execute('rsync -avzh /opt/software/ %s:/opt/software/' % (node.alias))
         master.ssh.execute('rsync -avzh /usr/local/Modules/applications/ %s:/usr/local/Modules/applications/' % (node.alias))
+        master.ssh.execute('rsync -avzh /usr/local/lib/ %s:/usr/local/lib/' % (node.alias))
 
         # set shell
         node.ssh.execute('mv /bin/sh /bin/sh.orig')
