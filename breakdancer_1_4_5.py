@@ -12,7 +12,6 @@ class BreakdancerInstaller(ClusterSetup):
 			node.ssh.execute('cd /opt/software/breakdancer/breakdancer_1_4_5/build && make')
 			node.ssh.execute('cd /opt/software/breakdancer/breakdancer_1_4_5/build && make install')
 
-	
                         node.ssh.execute('mkdir -p /usr/local/Modules/applications/breakdancer/;touch /usr/local/Modules/applications/breakdancer/1.4.5')
                         node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/breakdancer/1.4.5')
                         node.ssh.execute('echo "set root /opt/software/breakdancer/breakdancer_1_4_5" >> /usr/local/Modules/applications/breakdancer/1.4.5')
