@@ -29,6 +29,13 @@ class FakeModInstaller(ClusterSetup):
 			node.ssh.execute('echo -e "prepend-path\tPATH\t\$root" >> /usr/local/Modules/applications/gatk/3.3-0')			
 			node.ssh.execute('mkdir -p /opt/software/gatk/3.3-0')
 			
+                        log.info("Creating GATK 3.5-0 module files on %s" % (node.alias))
+                        node.ssh.execute('mkdir /usr/local/Modules/applications/gatk')
+                        node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/gatk/3.5-0')
+                        node.ssh.execute('echo "set root /opt/software/gatk/3.5-0" >> /usr/local/Modules/applications/gatk/3.5-0')
+                        node.ssh.execute('echo -e "prepend-path\tPATH\t\$root" >> /usr/local/Modules/applications/gatk/3.5-0')
+                        node.ssh.execute('mkdir -p /opt/software/gatk/3.5-0')
+
 			log.info("Creating MuTect 1.1.4 module files on %s" % (node.alias))
 			node.ssh.execute('mkdir /usr/local/Modules/applications/mutect')
 			node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/mutect/1.1.4')
