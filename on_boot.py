@@ -60,6 +60,7 @@ class Setup(ClusterSetup):
         node.ssh.execute('mkdir -p /data/s3/averaprojects')
         node.ssh.execute('mkdir -p /data/s3/averafastq')
         node.ssh.execute('mkdir -p /data/s3/averamirt')
+        node.ssh.execute('mkdir -p /data/s3/foundationmedicine')
 
         # copy credentials
         master.ssh.execute('scp /root/.s3cfg %s:/root/.s3cfg' % (node.alias))
@@ -73,6 +74,7 @@ class Setup(ClusterSetup):
         node.ssh.execute('if mount | grep /data/s3/averaprojects; then umount -l /data/s3/averaprojects && s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averafastq; then umount -l /data/s3/averafastq && s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averamirt; then umount -l /data/s3/averamirt && s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+        node.ssh.execute('if mount | grep /data/s3/foundationmedicine; then umount -l /data/s3/foundationmedicine && s3fs averamirt /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs foundationmedicine /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
 
         #add cron job to clear out the s3fs cache that is older then 12 hours, run every minute
         node.ssh.execute("echo '* * * * * find /mnt/tmp/avera*/ -type f -mmin +$((60*12)) -exec rm -f '{}' \;' >> /var/spool/cron/crontabs/root")
