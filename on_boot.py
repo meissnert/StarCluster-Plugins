@@ -76,5 +76,11 @@ class Setup(ClusterSetup):
         node.ssh.execute('if mount | grep /data/s3/averamirt; then umount -l /data/s3/averamirt && s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         #node.ssh.execute('if mount | grep /data/s3/foundationmedicine; then umount -l /data/s3/foundationmedicine && s3fs foundationmedicine /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs foundationmedicine /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
 
+	# add basic system monitoring
+	node.ssh.execute('apt-get install -y sysstat')
+	master.ssh.execute('scp /root/chkh.sh %s:/root/chkh.sh' % (node.alias))
+
         #add cron job to clear out the s3fs cache that is older then 12 hours, run every minute
         node.ssh.execute("echo '* * * * * find /mnt/tmp/avera*/ -type f -mmin +$((60*12)) -exec rm -f '{}' \;' >> /var/spool/cron/crontabs/root")
+	node.ssh.execute("echo '*/5 * * * * /root/chkh.sh' >> /var/spool/cron/crontabs/root")
+	node.ssh.execute('sed -i "1iMAILTO=\'\'" /var/spool/cron/crontabs/root')
