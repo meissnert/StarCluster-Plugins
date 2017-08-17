@@ -15,4 +15,4 @@ class StrelkaInstaller(ClusterSetup):
                         node.ssh.execute('mkdir -p /usr/local/Modules/applications/strelka/;touch /usr/local/Modules/applications/strelka/1.0.14')
                         node.ssh.execute('echo "#%Module" >> /usr/local/Modules/applications/strelka/1.0.14')
                         node.ssh.execute('echo "set root /opt/software/strelka/1.0.14" >> /usr/local/Modules/applications/strelka/1.0.14')
-                        node.ssh.execute('echo -e "prepend-path\tPATH\t\$root/bin" >> /usr/local/Modules/applications/strelka/1.0.14')
+                        node.ssh.execute('echo -e "prepend-path\tPATH\t\$root" >> /usr/local/Modules/applications/strelka/1.0.14')

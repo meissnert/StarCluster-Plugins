@@ -37,6 +37,7 @@ class Setup(ClusterSetup):
         log.info('Syncing software with master node...')
         master.ssh.execute('rsync -avzh /opt/software/ %s:/opt/software/' % (node.alias))
         master.ssh.execute('rsync -avzh /usr/local/Modules/applications/ %s:/usr/local/Modules/applications/' % (node.alias))
+        master.ssh.execute('rsync -avzh /usr/local/lib/ %s:/usr/local/lib/' % (node.alias))
 
         # set shell
         node.ssh.execute('mv /bin/sh /bin/sh.orig')
@@ -55,21 +56,32 @@ class Setup(ClusterSetup):
 
         # mount s3 buckets
         log.info("Mounting S3 buckets ..")
-        node.ssh.execute('mkdir -p /data/s3/basespacebackup')
+        #node.ssh.execute('mkdir -p /data/s3/basespacebackup')
         node.ssh.execute('mkdir -p /data/s3/averapatients')
         node.ssh.execute('mkdir -p /data/s3/averaprojects')
         node.ssh.execute('mkdir -p /data/s3/averafastq')
         node.ssh.execute('mkdir -p /data/s3/averamirt')
+        #node.ssh.execute('mkdir -p /data/s3/foundationmedicine')
 
         # copy credentials
         master.ssh.execute('scp /root/.s3cfg %s:/root/.s3cfg' % (node.alias))
         master.ssh.execute('scp /root/.passwd-s3fs %s:/root/.passwd-s3fs' % (node.alias))
 
-        node.ssh.execute('if mount | grep /data/s3/basespacebackup; then umount -l /data/s3/basespacebackup && s3fs averafastq /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs basespacebackup /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+        # sync user permissions
+        master.ssh.execute('scp /etc/group %s:/etc/group' % (node.alias))
+
+        #node.ssh.execute('if mount | grep /data/s3/basespacebackup; then umount -l /data/s3/basespacebackup && s3fs basespacebackup /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs basespacebackup /data/s3/basespacebackup -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averapatients; then umount -l /data/s3/averapatients && s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averapatients /data/s3/averapatients -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averaprojects; then umount -l /data/s3/averaprojects && s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averaprojects /data/s3/averaprojects -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averafastq; then umount -l /data/s3/averafastq && s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averafastq /data/s3/averafastq -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
         node.ssh.execute('if mount | grep /data/s3/averamirt; then umount -l /data/s3/averamirt && s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs averamirt /data/s3/averamirt -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+        #node.ssh.execute('if mount | grep /data/s3/foundationmedicine; then umount -l /data/s3/foundationmedicine && s3fs foundationmedicine /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; else s3fs foundationmedicine /data/s3/foundationmedicine -o allow_other,uid=1002,gid=100,umask=0002,use_cache=/tmp; fi')
+
+	# add basic system monitoring
+	node.ssh.execute('apt-get install -y sysstat')
+	master.ssh.execute('scp /root/chkh.sh %s:/root/chkh.sh' % (node.alias))
 
         #add cron job to clear out the s3fs cache that is older then 12 hours, run every minute
         node.ssh.execute("echo '* * * * * find /mnt/tmp/avera*/ -type f -mmin +$((60*12)) -exec rm -f '{}' \;' >> /var/spool/cron/crontabs/root")
+	node.ssh.execute("echo '*/5 * * * * /root/chkh.sh' >> /var/spool/cron/crontabs/root")
+	node.ssh.execute('sed -i "1iMAILTO=\'\'" /var/spool/cron/crontabs/root')
