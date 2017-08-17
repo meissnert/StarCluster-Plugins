@@ -28,10 +28,10 @@ class Setup(ClusterSetup):
         node.ssh.execute('if mount | grep /data/storage; then echo "already mounted"; else mount -t nfs master:/data/storage /data/storage; fi')
 
         # add manually mounted basespace
-        #master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
-        #master.ssh.execute('exportfs -a')
-        #node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
-        #node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
+        master.ssh.execute('echo "/data/basespace" %s"(async,no_root_squash,no_subtree_check,rw,fsid=0)" >> /etc/exports' % (node.alias))
+        master.ssh.execute('exportfs -a')
+        node.ssh.execute('if [ ! -d /data/basespace ]; then mkdir -p /data/basespace; fi')
+        node.ssh.execute('if mount | grep /data/basespace; then echo "already mounted"; else mount -t nfs master:/data/basespace /data/basespace; fi')        
 
         # sync node with headnode
         log.info('Syncing software with master node...')
@@ -43,10 +43,10 @@ class Setup(ClusterSetup):
         node.ssh.execute('ln -s /bin/bash /bin/sh')
 
         # install ganglia monitoring
-        log.info("Install Ganglia monitoring")
-        master.ssh.execute('scp /gmond.conf %s:/etc/ganglia/gmond.conf' % (node.alias))
-        node.ssh.execute('service nginx stop')
-        node.ssh.execute('service ganglia-monitor restart && service gmetad restart && service apache2 restart')
+        #log.info("Install Ganglia monitoring")
+        #master.ssh.execute('scp /gmond.conf %s:/etc/ganglia/gmond.conf' % (node.alias))
+        #node.ssh.execute('service nginx stop')
+        #node.ssh.execute('service ganglia-monitor restart && service gmetad restart && service apache2 restart')
 
         # remount /tmp to /mnt/tmp
         log.info('Remounting /tmp to /mnt/tmp ..')
